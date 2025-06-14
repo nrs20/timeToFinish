@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HowLongToBeat Time Calculator</title>
+  <link href="https://cdn.jsdelivr.net/gh/RonenNess/RPGUI/dist/rpgui.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/gh/RonenNess/RPGUI/dist/rpgui.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff99;
+      background: url("static/images/bruh.png"), #1a1a1a;
+      background-size: cover;
+      background-repeat: repeat;
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3 {
+      text-shadow: 0 0 4px rgb(0, 0, 0), 0 0 8px #008866;
+      padding-bottom: 6px;
+      margin-top: 24px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 7.8em;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .rpgui-input, .rpgui-dropdown {
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .game-cover {
+      display: block;
+      margin: 12px auto;
+      border: 2px solid #00ff99;
+      box-shadow: 0 0 10px #00ff99;
+      border-radius: 6px;
+      max-width: 100%;
+      height: auto;
+    }
+
+    ul {
+      padding-left: 1.5em;
+    }
+
+    a {
+      color: #00ff99;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      color: #33ffcc;
+    }
+
+    ::selection {
+      background: #00ff99;
+      color: #222;
+    }
+
+     @media (min-width: 768px) {
+        form, .rpgui-container.framed {
+            width: 500px; /* Increased from 300px */
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+
+    .rpgui-container.framed {
+        position: static !important;
+        transform: none !important;
+        top: auto !important;
+        left: auto !important;
+        width: 100%; /* Ensure full width on small screens */
+        max-width: 500px; /* Match the new width */
+    }
+
+    .rpgui-button {
+      display: block;
+      margin: 10px auto;
+    }
+
+ html, body {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: relative;
+}
+
+.rpgui-content {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  display: block !important;
+  position: relative !important;
+}
+  </style>
+</head>
+<body>
+  <div class="rpgui-content">
+    <h1>TimeToPlay</h1>
+
+    <form method="POST" class="rpgui-container framed">
+      <label for="game">Select a game:</label>
+      <input type="text" name="game" placeholder="Enter game name..." class="rpgui-input" required />
+
+      <label for="free_time">Free time amount:</label>
+      <input type="number" min="0" name="free_time" id="free_time" placeholder="e.g. 2" class="rpgui-input" required />
+
+      <label for="free_time_unit">Time Unit:</label>
+      <select name="free_time_unit" id="free_time_unit" class="rpgui-dropdown" required>
+        <option value="day">Hours per day</option>
+        <option value="week">Hours per week</option>
+      </select>
+
+      <button type="submit" class="rpgui-button">Calculate</button>
+    </form>
+
+    {% if error %}
+      <div class="rpgui-container framed rpgui-content">
+        <p style="color: #ff0055;">{{ error }}</p>
+      </div>
+    {% endif %}
+
+    {% if completion_data %}
+      <div class="rpgui-container framed rpgui-content">
+        <h1>{{ completion_data.name }}</h1>
+
+        {% if user_input and free_time and free_time_unit %}
+
+            <h3>Estimated completion time playing {{ free_time }} hours per {{ "day" if free_time_unit == "day" else "week" }}:</h3>
+        <div>
+          <p>Main story: {{ est_days_main|round(1) }} days (~{{ (est_days_main / 7)|round(1) }} weeks)</p>
+          <p>Completionist: {{ est_days_100|round(1) }} days (~{{ (est_days_100 / 7)|round(1) }} weeks)</p>
+        </div>
+        {% endif %}
+
+        {% if completion_data.image_url %}
+          <img src="{{ completion_data.image_url }}" alt="Game Cover" class="game-cover" />
+        {% endif %}
+      
+        {% if completion_data.game_review_score or completion_data.profile_platforms or completion_data.game_web_link %}
+          <h3>Other Info:</h3>
+        {% endif %}
+         {% if completion_data.main_story %}
+            <p>Main story: {{ completion_data.main_story }} hours total</p>
+        {% endif %}
+        {% if completion_data.completionist %}
+            <p>Completionist: {{ completion_data.completionist }} hours total</p>
+        {% endif %}
+
+        {% if completion_data.game_review_score %}
+          <p>Rating: ({{ completion_data.game_review_score }} / 100)</p>
+        {% endif %}
+        {% if completion_data.profile_platforms %}
+          <p>Profile Platforms: {{ completion_data.profile_platforms | join(", ") }}</p>
+        {% endif %}
+        {% if completion_data.game_web_link %}
+          <p>
+            <a href="{{ completion_data.game_web_link }}" target="_blank">View on HowLongToBeat</a>
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if suggestions and suggestions|length > 0 %}
+      <div class="rpgui-container framed rpgui-content">
+        <h3>Similar games:</h3>
+        <ul>
+          {% for s in suggestions %}
+            <li>
+              <strong>{{ s.name }}</strong> (Main: {{ s.main_story }}h, Completionist: {{ s.completionist }}h)
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
