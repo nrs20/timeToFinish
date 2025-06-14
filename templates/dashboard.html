@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>HowLongToBeat Time Calculator</title>
+    <style>
+      body {
+        background: #222;
+        color: #00ff99;
+        font-family: 'Courier New', Courier, monospace;
+        margin: 0;
+        padding: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        text-shadow: 0 0 4px #00ff99, 0 0 8px #008866;
+        border-bottom: 2px solid #00ff99;
+        padding-bottom: 6px;
+        margin-top: 24px;
+        margin-bottom: 18px;
+      }
+      form {
+        background: #111;
+        border: 2px solid #00ff99;
+        box-shadow: 0 0 12px #00ff99;
+        padding: 24px;
+        width: 350px;
+        margin: 32px auto 24px auto;
+        border-radius: 8px;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+      select,
+      input[type='text'] {
+        background: #222;
+        color: #00ff99;
+        border: 1px solid #00ff99;
+        font-family: inherit;
+        font-size: 1em;
+        padding: 6px 10px;
+        margin-bottom: 14px;
+        border-radius: 3px;
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        background: #00ff99;
+        color: #222;
+        border: none;
+        font-family: inherit;
+        font-size: 1em;
+        padding: 8px 18px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 0 6px #00ff99;
+        transition: background 0.2s, color 0.2s;
+      }
+      button:hover {
+        background: #222;
+        color: #00ff99;
+        border: 1px solid #00ff99;
+      }
+      p {
+        margin: 10px 0;
+      }
+      .retro-box {
+        background: #111;
+        border: 2px solid #00ff99;
+        box-shadow: 0 0 12px #00ff99;
+        padding: 20px;
+        width: 350px;
+        margin: 0 auto 24px auto;
+        border-radius: 8px;
+      }
+      ::selection {
+        background: #00ff99;
+        color: #222;
+      }
+      @media (max-width: 400px) {
+        form,
+        .retro-box {
+          width: 98%;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>How Long To Beat Calculator</h1>
+
+    <form method="POST">
+      <label for="game">Select a game:</label>
+      <input type="text" name="game" placeholder="Enter game name..." required />
+
+      <label for="free_time">Free time amount:</label>
+      <input type="number" min="0" name="free_time" id="free_time" placeholder="e.g. 2" required />
+
+      <select name="free_time_unit" id="free_time_unit" required>
+        <option value="day">Hours per day</option>
+        <option value="week">Hours per week</option>
+      </select>
+
+      <br /><br />
+      <button type="submit">Calculate</button>
+    </form>
+
+    {% if error %}
+      <div class="retro-box">
+        <p style="color: #ff0055;">{{ error }}</p>
+      </div>
+    {% endif %}
+{% if completion_data.image_url %}
+    <img src="{{ completion_data.image_url }}" alt="Game Cover" style="width:250px;">
+{% endif %}
+    {% if completion_data %}
+      <div class="retro-box">
+        <h2>{{ completion_data.name }}</h2>
+        <p>Main story: {{ completion_data.main_story }} hours</p>
+        <p>Completionist: {{ completion_data.completionist }} hours</p>
+
+        <h3>Estimated time to complete:</h3>
+        <p>Main story: {{ est_days_main|round(1) }} days (~{{ (est_days_main / 7)|round(1) }} weeks)</p>
+        <p>Completionist: {{ est_days_100|round(1) }} days (~{{ (est_days_100 / 7)|round(1) }} weeks)</p>
+      </div>
+    {% endif %}
+
+    {% if suggestions and suggestions|length > 0 %}
+      <div class="retro-box">
+        <h3>Other similar games you might have meant:</h3>
+        <ul>
+          {% for s in suggestions %}
+            <li>
+              <strong>{{ s.name }}</strong>
+              (Main: {{ s.main_story }}h, Completionist: {{ s.completionist }}h)
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </body>
+</html>
