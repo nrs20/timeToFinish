@@ -1,9 +1,20 @@
 from flask import Flask, render_template, request
 from howlongtobeatpy import HowLongToBeat
+import os
+# importing necessary functions from dotenv library
+from dotenv import load_dotenv, dotenv_values 
+from steam_web_api import Steam
+
 
 app = Flask(__name__)
-
-#idea: add steam api to calculate stuff
+load_dotenv() 
+KEY = os.environ.get("STEAM_API_KEY")
+# accessing and printing value
+steam = Steam(KEY)
+print(os.getenv("STEAM_API_KEY"))
+print(steam.users.search_user("natnat4434"))
+print(steam.users.get_user_details("76561199494517477")) # example steam id
+#idea: add steam api to calculate  76561199494517477
 
 def get_game_times(game_name):
     results = HowLongToBeat().search(game_name)
