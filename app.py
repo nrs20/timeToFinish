@@ -12,8 +12,8 @@ KEY = os.environ.get("STEAM_API_KEY")
 # accessing and printing value
 steam = Steam(KEY)
 print(os.getenv("STEAM_API_KEY"))
-print(steam.users.search_user("natnat4434"))
-print(steam.users.get_user_details("76561199494517477")) # example steam id
+""" print(steam.users.search_user("natnat4434"))
+print(steam.users.get_user_details("76561199494517477"))  """# example steam id
 #idea: add steam api to calculate  76561199494517477
 
 def get_game_times(game_name):
