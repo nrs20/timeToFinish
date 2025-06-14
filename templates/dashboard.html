@@ -3,94 +3,133 @@
   <head>
     <meta charset="UTF-8" />
     <title>HowLongToBeat Time Calculator</title>
+       <link href="https://cdn.jsdelivr.net/gh/RonenNess/RPGUI/dist/rpgui.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/gh/RonenNess/RPGUI/dist/rpgui.min.js"></script>
+
     <style>
-      body {
-        background: #222;
-        color: #00ff99;
-        font-family: 'Courier New', Courier, monospace;
-        margin: 0;
-        padding: 0;
-      }
-      h1,
-      h2,
-      h3 {
-        text-shadow: 0 0 4px #00ff99, 0 0 8px #008866;
-        border-bottom: 2px solid #00ff99;
-        padding-bottom: 6px;
-        margin-top: 24px;
-        margin-bottom: 18px;
-      }
-      form {
-        background: #111;
-        border: 2px solid #00ff99;
-        box-shadow: 0 0 12px #00ff99;
-        padding: 24px;
-        width: 350px;
-        margin: 32px auto 24px auto;
-        border-radius: 8px;
-      }
-      label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: bold;
-        letter-spacing: 1px;
-      }
-      select,
-      input[type='text'] {
-        background: #222;
-        color: #00ff99;
-        border: 1px solid #00ff99;
-        font-family: inherit;
-        font-size: 1em;
-        padding: 6px 10px;
-        margin-bottom: 14px;
-        border-radius: 3px;
-        outline: none;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      button {
-        background: #00ff99;
-        color: #222;
-        border: none;
-        font-family: inherit;
-        font-size: 1em;
-        padding: 8px 18px;
-        border-radius: 3px;
-        cursor: pointer;
-        font-weight: bold;
-        box-shadow: 0 0 6px #00ff99;
-        transition: background 0.2s, color 0.2s;
-      }
-      button:hover {
-        background: #222;
-        color: #00ff99;
-        border: 1px solid #00ff99;
-      }
-      p {
-        margin: 10px 0;
-      }
-      .retro-box {
-        background: #111;
-        border: 2px solid #00ff99;
-        box-shadow: 0 0 12px #00ff99;
-        padding: 20px;
-        width: 350px;
-        margin: 0 auto 24px auto;
-        border-radius: 8px;
-      }
-      ::selection {
-        background: #00ff99;
-        color: #222;
-      }
-      @media (max-width: 400px) {
-        form,
-        .retro-box {
-          width: 98%;
-          padding: 10px;
-        }
-      }
-    </style>
+  body {
+    background: #1a1a1a;
+    color: #00ff99;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3 {
+    text-shadow: 0 0 4px #00ff99, 0 0 8px #008866;
+    border-bottom: 2px solid #00ff99;
+    padding-bottom: 6px;
+    margin-top: 24px;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  form {
+    background: #111;
+    border: 2px solid #00ff99;
+    box-shadow: 0 0 12px #00ff99;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  select, input[type='text'], input[type='number'] {
+    background: #222;
+    color: #00ff99;
+    border: 1px solid #00ff99;
+    font-family: inherit;
+    font-size: 1em;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    border-radius: 3px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  button {
+    background: #00ff99;
+    color: #222;
+    border: none;
+    font-family: inherit;
+    font-size: 1em;
+    padding: 10px 18px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 0 6px #00ff99;
+    transition: background 0.2s, color 0.2s;
+    width: 100%;
+  }
+
+  button:hover {
+    background: #222;
+    color: #00ff99;
+    border: 1px solid #00ff99;
+  }
+
+  .retro-box {
+    background: #111;
+    border: 2px solid #00ff99;
+    box-shadow: 0 0 12px #00ff99;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+
+  .game-cover {
+    display: block;
+    margin: 12px auto;
+    border: 2px solid #00ff99;
+    box-shadow: 0 0 10px #00ff99;
+    border-radius: 6px;
+    max-width: 100%;
+    height: auto;
+  }
+
+  .tabbed p {
+    text-indent: 2em;
+  }
+
+  ul {
+    padding-left: 1.5em;
+  }
+
+  a {
+    color: #00ff99;
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: #33ffcc;
+  }
+
+  ::selection {
+    background: #00ff99;
+    color: #222;
+  }
+
+  @media (min-width: 768px) {
+    form, .retro-box {
+      width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+</style>
+
   </head>
   <body>
     <h1>How Long To Beat Calculator</h1>
@@ -112,22 +151,50 @@
     </form>
 
     {% if error %}
-      <div class="retro-box">
-        <p style="color: #ff0055;">{{ error }}</p>
+<div class="rpgui-container">     
+       <p style="color: #ff0055;">{{ error }}</p>
       </div>
     {% endif %}
-{% if completion_data.image_url %}
-    <img src="{{ completion_data.image_url }}" alt="Game Cover" style="width:250px;">
-{% endif %}
+
     {% if completion_data %}
       <div class="retro-box">
         <h2>{{ completion_data.name }}</h2>
-        <p>Main story: {{ completion_data.main_story }} hours</p>
-        <p>Completionist: {{ completion_data.completionist }} hours</p>
+         
+        {% if completion_data.image_url %}
+          <img src="{{ completion_data.image_url }}" alt="Game Cover" class="game-cover" />
+        {% endif %}
 
-        <h3>Estimated time to complete:</h3>
-        <p>Main story: {{ est_days_main|round(1) }} days (~{{ (est_days_main / 7)|round(1) }} weeks)</p>
-        <p>Completionist: {{ est_days_100|round(1) }} days (~{{ (est_days_100 / 7)|round(1) }} weeks)</p>
+        <p><u>Main story</u>: {{ completion_data.main_story }} hours total</p>
+        <p><u>Completionist</u>: {{ completion_data.completionist }} hours total</p>
+
+        <h2>Estimated completion time:</h2>
+         {% if user_input and free_time and free_time_unit %}
+          <p>
+           Based on your input of
+           <strong>{{ free_time }} hours </strong> per {{ "day" if free_time_unit == "day" else "week" }}
+          </p>
+        {% endif %}
+        <div class="tab1">
+          <p>Main story: {{ est_days_main|round(1) }} days (~{{ (est_days_main / 7)|round(1) }} weeks)</p>
+          <p>Completionist: {{ est_days_100|round(1) }} days (~{{ (est_days_100 / 7)|round(1) }} weeks)</p>
+        </div>
+        {% if completion_data.game_review_score or completion_data.profile_platforms or completion_data.game_web_link %}
+          <h2>Other Info:</h2>
+        {% endif %}
+
+        {% if completion_data.game_review_score %}
+          Rating: ({{ completion_data.game_review_score }} / 100)
+        {% endif %}
+        {% if completion_data.profile_platforms %}
+          <p>Profile Platforms: {{ completion_data.profile_platforms | join(", ") }}</p>
+        {% endif %}
+          {% if completion_data.game_web_link %}
+            <p>
+                <a href="{{ completion_data.game_web_link }}" target="_blank" style="color: #00ff99;">
+                View on HowLongToBeat
+                </a>
+            </p>
+        {% endif %}
       </div>
     {% endif %}
 

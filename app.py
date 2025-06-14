@@ -3,7 +3,7 @@ from howlongtobeatpy import HowLongToBeat
 
 app = Flask(__name__)
 
-
+#idea: add steam api to calculate stuff
 
 def get_game_times(game_name):
     results = HowLongToBeat().search(game_name)
@@ -11,7 +11,8 @@ def get_game_times(game_name):
         return None, []
     game = max(results, key=lambda x: x.similarity) 
     print(game)# best match
-    #print("Image URL:", game.image_url)
+    print("Image URL:", game.game_image_url)
+    print("Review Score:", game.review_score)
    # Suggest up to 4 other games (excluding the best match)
     suggestions = [
         {'name': g.game_name, 'main_story': g.main_story, 'completionist': g.completionist}
@@ -21,14 +22,16 @@ def get_game_times(game_name):
         'name': game.game_name,
         'main_story': game.main_story,
         'completionist': game.completionist,
-        'image_url': f"https://howlongtobeat.com{game.image_url}"
-
+        'image_url': game.game_image_url,
+        'game_review_score': game.review_score,
+        'profile_platforms': game.profile_platforms,
+        'game_web_link': game.game_web_link
     }, suggestions
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     completion_data = None
-    est_days_main = None
+    est_days_main = None 
     est_days_100 = None
     error = None
     suggestions = []
@@ -63,6 +66,10 @@ def index():
                            est_days_main=est_days_main,
                            est_days_100=est_days_100,
                            error=error,
-                           suggestions=suggestions)
+                           suggestions=suggestions,
+                            user_input=game if request.method == 'POST' else None,
+                           free_time=free_time if request.method == 'POST' else None,
+                           free_time_unit=free_time_unit if request.method == 'POST' else None
+                           )
 if __name__ == '__main__':
     app.run(debug=True)
