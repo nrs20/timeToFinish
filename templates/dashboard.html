@@ -115,6 +115,9 @@
       <label for="game">Select a game:</label>
       <input type="text" name="game" placeholder="Enter game name..." class="rpgui-input" required />
 
+      <label for="steam_id">Enter steam id (ex: 76561199494517477) </label>
+      <input type="text" name="steam_id" placeholder="Enter steam id..." class="rpgui-input" required />
+
       <label for="free_time">Free time amount:</label>
       <input type="number" min="0" name="free_time" id="free_time" placeholder="e.g. 2" class="rpgui-input" required />
 
@@ -173,6 +176,19 @@
         {% endif %}
       </div>
     {% endif %}
+
+
+    {%if total_hours_main or total_hours_completionist%}
+    <div class="rpgui-container framed rpgui-content">
+      <h3>Estimated Total Playtime:</h3>
+      <p>Main story: {{ total_hours_main }} hours</p>
+      <p>Completionist: {{ total_hours_completionist }} hours</p>
+    </div>
+    {%else%}
+    <div class="rpgui-container framed rpgui-content">
+      <h3>No playtime data available.</h3>
+    </div>
+    {%endif%}
 
     {% if suggestions and suggestions|length > 0 %}
       <div class="rpgui-container framed rpgui-content">
