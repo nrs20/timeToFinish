@@ -82,7 +82,7 @@
         top: auto !important;
         left: auto !important;
         width: 100%; /* Ensure full width on small screens */
-        max-width: 500px; /* Match the new width */
+        max-width: 700px; /* Match the new width */
     }
 
     .rpgui-button {
@@ -105,30 +105,126 @@
   display: block !important;
   position: relative !important;
 }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(20, 20, 20, 0.85);
+      align-items: center;
+      justify-content: center;
+    }
+    .loading-content {
+      text-align: center;
+      color: #00ff99;
+      font-size: 2em;
+    }
   </style>
 </head>
 <body>
+  <!-- Loading Indicator -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content rpgui-container framed">
+      <div class="rpgui-icon hourglass"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
+
   <div class="rpgui-content">
     <h1>TimeToPlay</h1>
 
-    <form method="POST" class="rpgui-container framed">
-      <label for="game">Select a game:</label>
-      <input type="text" name="game" placeholder="Enter game name..." class="rpgui-input" required />
+    <!-- Choice Selector -->
+    <div class="rpgui-container framed" style="max-width:500px;margin:auto;">
+      <label>Choose search method:</label>
+      <input type="radio" id="by_game" name="search_method" value="game" checked onchange="toggleForms()">
+      <label for="by_game" style="display:inline;font-weight:normal;">By Game Name</label>
+      <input type="radio" id="by_steam" name="search_method" value="steam" onchange="toggleForms()">
+      <label for="by_steam" style="display:inline;font-weight:normal;">By Steam ID</label>
+    </div>
 
-      <label for="steam_id">Enter steam id (ex: 76561199494517477) </label>
-      <input type="text" name="steam_id" placeholder="Enter steam id..." class="rpgui-input" required />
-
+    <!-- Game Name Search Form -->
+    <form id="game_form" method="POST" class="rpgui-container framed">
+      <input type="hidden" name="form_type" value="search_game">
+      <label for="game">Search for a game by name:</label>
+      <input type="text" name="game" placeholder="Enter game name..." class="rpgui-input" value="{{ user_input or '' }}" />
       <label for="free_time">Free time amount:</label>
-      <input type="number" min="0" name="free_time" id="free_time" placeholder="e.g. 2" class="rpgui-input" required />
-
+      <input type="number" min="0" name="free_time" id="free_time" placeholder="e.g. 2" class="rpgui-input" value="{{ free_time or '' }}" required />
       <label for="free_time_unit">Time Unit:</label>
       <select name="free_time_unit" id="free_time_unit" class="rpgui-dropdown" required>
-        <option value="day">Hours per day</option>
-        <option value="week">Hours per week</option>
+        <option value="day" {% if free_time_unit == "day" %}selected{% endif %}>Hours per day</option>
+        <option value="week" {% if free_time_unit == "week" %}selected{% endif %}>Hours per week</option>
       </select>
-
-      <button type="submit" class="rpgui-button">Calculate</button>
+      <button type="submit" class="rpgui-button">Search Game</button>
     </form>
+
+    <!-- Steam ID Lookup Form -->
+    <form id="steam_form" method="POST" class="rpgui-container framed" style="display:none;">
+      <input type="hidden" name="form_type" value="steam_lookup">
+      <label for="steam_id">Enter Steam ID to load unplayed games:</label>
+      <input type="text" name="steam_id" placeholder="Enter steam id..." class="rpgui-input" value="{{ steam_id or '' }}" required />
+      <label for="free_time_steam">Free time amount:</label>
+      <input type="number" min="0" name="free_time" id="free_time_steam" placeholder="e.g. 2" class="rpgui-input" value="{{ free_time or '' }}" required />
+      <label for="free_time_unit_steam">Time Unit:</label>
+      <select name="free_time_unit" id="free_time_unit_steam" class="rpgui-dropdown" required>
+        <option value="day" {% if free_time_unit == "day" %}selected{% endif %}>Hours per day</option>
+        <option value="week" {% if free_time_unit == "week" %}selected{% endif %}>Hours per week</option>
+      </select>
+      <button type="submit" class="rpgui-button">Load Unplayed Games</button>
+    </form>
+
+    <script>
+    function toggleForms() {
+      const byGame = document.getElementById('by_game').checked;
+      document.getElementById('game_form').style.display = byGame ? '' : 'none';
+      document.getElementById('steam_form').style.display = byGame ? 'none' : '';
+    }
+    window.onload = toggleForms;
+
+    // Loading indicator logic
+    function showLoading() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+    // Attach to all forms
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', showLoading);
+      });
+    });
+    </script>
+
+    {% if unplayed_games %}
+      <form method="POST" class="rpgui-container framed">
+        <input type="hidden" name="form_type" value="calculate_unplayed">
+        <label>Select up to 10 games:</label>
+        <div style="max-height: 200px; overflow: auto;">
+          {% for g in unplayed_games[:50] %}
+            <label style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;" title="{{ g }}">
+              <span style="width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ g }}">{{ g }}</span>
+              <input type="checkbox"
+                     name="selected_games"
+                     value="{{ g }}"
+                     {% if g in selected_games %}checked{% endif %}
+                     onclick="limitCheckboxes(this)" />
+            </label>
+          {% endfor %}
+        </div>
+        <input type="hidden" name="steam_id" value="{{ steam_id or '' }}">
+        <input type="hidden" name="free_time" value="{{ free_time or '' }}">
+        <input type="hidden" name="free_time_unit" value="{{ free_time_unit or '' }}">
+        <button type="submit" name="calculate" class="rpgui-button">Calculate Selected Games</button>
+      </form>
+      <script>
+        function limitCheckboxes(clicked) {
+          const max = 10;
+          const checkboxes = document.querySelectorAll('input[name="selected_games"]:checked');
+          if (checkboxes.length > max) {
+            clicked.checked = false;
+            alert("You can select up to 10 games only.");
+          }
+        }
+      </script>
+    {% endif %}
 
     {% if error %}
       <div class="rpgui-container framed rpgui-content">
@@ -139,20 +235,16 @@
     {% if completion_data %}
       <div class="rpgui-container framed rpgui-content">
         <h1>{{ completion_data.name }}</h1>
-
         {% if user_input and free_time and free_time_unit %}
-
             <h3>Estimated completion time playing {{ free_time }} hours per {{ "day" if free_time_unit == "day" else "week" }}:</h3>
         <div>
           <p>Main story: {{ est_days_main|round(1) }} days (~{{ (est_days_main / 7)|round(1) }} weeks)</p>
           <p>Completionist: {{ est_days_100|round(1) }} days (~{{ (est_days_100 / 7)|round(1) }} weeks)</p>
         </div>
         {% endif %}
-
         {% if completion_data.image_url %}
           <img src="{{ completion_data.image_url }}" alt="Game Cover" class="game-cover" />
         {% endif %}
-      
         {% if completion_data.game_review_score or completion_data.profile_platforms or completion_data.game_web_link %}
           <h3>Other Info:</h3>
         {% endif %}
@@ -162,7 +254,6 @@
         {% if completion_data.completionist %}
             <p>Completionist: {{ completion_data.completionist }} hours total</p>
         {% endif %}
-
         {% if completion_data.game_review_score %}
           <p>Rating: ({{ completion_data.game_review_score }} / 100)</p>
         {% endif %}
@@ -177,18 +268,31 @@
       </div>
     {% endif %}
 
+    {% if user_unplayed_data %}
+      <div class="rpgui-container framed rpgui-content">
+        <h3>Selected Games Playtime:</h3>
+        <ul>
+          {% for g in user_unplayed_data %}
+            <li>
+              <strong>{{ g.name }}</strong> (Main: {{ g.main_story }}h, Completionist: {{ g.completionist }}h)
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
 
-    {%if total_hours_main or total_hours_completionist%}
-    <div class="rpgui-container framed rpgui-content">
-      <h3>Estimated Total Playtime:</h3>
-      <p>Main story: {{ total_hours_main }} hours</p>
-      <p>Completionist: {{ total_hours_completionist }} hours</p>
-    </div>
-    {%else%}
-    <div class="rpgui-container framed rpgui-content">
-      <h3>No playtime data available.</h3>
-    </div>
-    {%endif%}
+    {% if (total_hours_main or total_hours_100) and selected_games %}
+      <div class="rpgui-container framed rpgui-content">
+        <h3>Estimated Total Playtime:</h3>
+        <p> For games: {{ selected_games|join(", ") }}</p>
+        <p>Main story: {{ total_hours_main }} hours</p>
+        <p>Completionist: {{ total_hours_100 }} hours</p>
+      </div>
+    {% elif selected_games %}
+      <div class="rpgui-container framed rpgui-content">
+        <h3>No playtime data available.</h3>
+      </div>
+    {% endif %}
 
     {% if suggestions and suggestions|length > 0 %}
       <div class="rpgui-container framed rpgui-content">
