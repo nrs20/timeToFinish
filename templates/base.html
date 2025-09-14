@@ -1,0 +1,111 @@
+<!-- filepath: c:\Users\nsays\OneDrive\Documents\GitHub\timeToFinish\templates\base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}TimeToPlay{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/gh/RonenNess/RPGUI/dist/rpgui.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/gh/RonenNess/RPGUI/dist/rpgui.min.js"></script>
+  <style>
+    /* Copy all CSS from dashboard.html here */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      color: #00ff99;
+      background: url("static/images/bruh.png"), #1a1a1a;
+      background-size: cover;
+      background-repeat: repeat;
+      background-attachment: fixed;
+    }
+    h1, h2, h3 {
+      text-shadow: 0 0 4px rgb(0, 0, 0), 0 0 8px #008866;
+      padding-bottom: 6px;
+      margin-top: 24px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    h1 { font-size: 7.8em; }
+    label { display: block; margin-bottom: 6px; font-weight: bold; letter-spacing: 1px; }
+    .rpgui-input, .rpgui-dropdown { width: 100%; margin-bottom: 14px; }
+    .game-cover { display: block; margin: 12px auto; border: 2px solid #00ff99; box-shadow: 0 0 10px #00ff99; border-radius: 6px; max-width: 100%; height: auto; }
+    ul { padding-left: 1.5em; }
+    a { color: #00ff99; text-decoration: underline; }
+    a:hover { color: #33ffcc; }
+    ::selection { background: #00ff99; color: #222; }
+    @media (min-width: 768px) {
+      form, .rpgui-container.framed { width: 500px; margin-left: auto; margin-right: auto; }
+    }
+    .rpgui-container.framed { position: static !important; transform: none !important; top: auto !important; left: auto !important; width: 100%; max-width: 700px; }
+    .rpgui-button { display: block; margin: 10px auto; }
+    html, body { height: auto !important; min-height: 100vh !important; overflow-y: auto !important; overflow-x: hidden !important; position: relative; }
+    .rpgui-content { height: auto !important; max-height: none !important; overflow: visible !important; display: block !important; position: relative !important; }
+    .loading-overlay { display: none; position: fixed; z-index: 9999; top: 0; left: 0; right: 0; bottom: 0; background: rgba(20, 20, 20, 0.85); align-items: center; justify-content: center; }
+    .loading-content { text-align: center; color: #00ff99; font-size: 2em; }
+    .center-img { display: block; margin-left: auto; margin-right: auto; height: 300px; }
+    .navbar { background-color: #111; overflow: hidden; position: relative; z-index: 10000; }
+    .navbar ul { list-style-type: none; padding: 0; margin: 0; display: flex; justify-content: center; }
+    .navbar li { padding: 14px 20px; }
+    .navbar a { color: #00ff99; text-decoration: none; font-weight: bold; }
+    .navbar a:hover { color: #33ffcc; }
+    .hamburger { display: none; flex-direction: column; cursor: pointer; margin: 10px; }
+    .hamburger span { height: 3px; width: 25px; background: #00ff99; margin-bottom: 4px; transition: all 0.3s; }
+    .navbar.responsive { position: relative; }
+    .navbar.responsive ul { display: block; width: 100%; }
+    .navbar.responsive li { text-align: center; padding: 10px 0; }
+    .navbar.responsive a { display: block; }
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .navbar ul { display: none; flex-direction: column; width: 100%; background-color: #111; position: absolute; top: 60px; left: 0; }
+      .navbar li { padding: 10px 0; }
+      .navbar.responsive ul { display: flex; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Indicator -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content rpgui-container framed">
+      <div class="rpgui-icon hourglass"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
+  <div class="rpgui-content">
+    <h1>TimeToPlay</h1>
+    <!-- Navigation Bar -->
+    <div class="hamburger" onclick="toggleNavbar()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav class="navbar" id="mainNavbar">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="https://howlongtobeat.com/" target="_blank">HowLongToBeat</a></li>
+        <li><a href="https://store.steampowered.com/" target="_blank">Steam</a></li>
+      </ul>
+    </nav>
+    {% block content %}{% endblock %}
+  </div>
+  <script>
+    function toggleForms() {
+      const byGame = document.getElementById('by_game').checked;
+      document.getElementById('game_form').style.display = byGame ? '' : 'none';
+      document.getElementById('steam_form').style.display = byGame ? 'none' : '';
+    }
+    window.onload = toggleForms;
+    function showLoading() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('form').forEach(function(form) {
+        form.addEventListener('submit', showLoading);
+      });
+    });
+    function toggleNavbar() {
+      var navList = document.querySelector('.navbar ul');
+      navList.classList.toggle('show');
+    }
+  </script>
+</body>
+</html>

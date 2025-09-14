@@ -1,0 +1,34 @@
+<!-- filepath: c:\Users\nsays\OneDrive\Documents\GitHub\timeToFinish\templates\game_results.html -->
+<div class="rpgui-container framed rpgui-content">
+  <h1>{{ completion_data.name }}</h1>
+  {% if user_input and free_time and free_time_unit %}
+    <h3>Estimated completion time playing {{ free_time }} hours per {{ "day" if free_time_unit == "day" else "week" }}:</h3>
+    <div>
+      <p>Main story: {{ est_days_main|round(1) }} days (~{{ (est_days_main / 7)|round(1) }} weeks)</p>
+      <p>Completionist: {{ est_days_100|round(1) }} days (~{{ (est_days_100 / 7)|round(1) }} weeks)</p>
+    </div>
+  {% endif %}
+  {% if completion_data.image_url %}
+    <img src="{{ completion_data.image_url }}" alt="Game Cover" class="game-cover" />
+  {% endif %}
+  {% if completion_data.game_review_score or completion_data.profile_platforms or completion_data.game_web_link %}
+    <h3>Other Info:</h3>
+  {% endif %}
+  {% if completion_data.main_story %}
+    <p>Main story: {{ completion_data.main_story }} hours total</p>
+  {% endif %}
+  {% if completion_data.completionist %}
+    <p>Completionist: {{ completion_data.completionist }} hours total</p>
+  {% endif %}
+  {% if completion_data.game_review_score %}
+    <p>Rating: ({{ completion_data.game_review_score }} / 100)</p>
+  {% endif %}
+  {% if completion_data.profile_platforms %}
+    <p>Profile Platforms: {{ completion_data.profile_platforms | join(", ") }}</p>
+  {% endif %}
+  {% if completion_data.game_web_link %}
+    <p>
+      <a href="{{ completion_data.game_web_link }}" target="_blank">View on HowLongToBeat</a>
+    </p>
+  {% endif %}
+</div>

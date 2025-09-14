@@ -1,0 +1,14 @@
+<!-- filepath: c:\Users\nsays\OneDrive\Documents\GitHub\timeToFinish\templates\steam_form.html -->
+<form id="steam_form" method="POST" class="rpgui-container framed" style="display:none;">
+  <input type="hidden" name="form_type" value="steam_lookup">
+  <label for="steam_id">Enter Steam ID to load unplayed games:</label>
+  <input type="text" name="steam_id" placeholder="Enter steam id..." class="rpgui-input" value="{{ steam_id or '' }}" required />
+  <label for="free_time_steam">Free time amount:</label>
+  <input type="number" min="0" name="free_time" id="free_time_steam" placeholder="e.g. 2" class="rpgui-input" value="{{ free_time or '' }}" required />
+  <label for="free_time_unit_steam">Time Unit:</label>
+  <select name="free_time_unit" id="free_time_unit_steam" class="rpgui-dropdown" required>
+    <option value="day" {% if free_time_unit == "day" %}selected{% endif %}>Hours per day</option>
+    <option value="week" {% if free_time_unit == "week" %}selected{% endif %}>Hours per week</option>
+  </select>
+  <button type="submit" class="rpgui-button">Load Unplayed Games</button>
+</form>

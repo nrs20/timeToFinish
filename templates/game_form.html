@@ -1,0 +1,14 @@
+<!-- filepath: c:\Users\nsays\OneDrive\Documents\GitHub\timeToFinish\templates\game_form.html -->
+<form id="game_form" method="POST" class="rpgui-container framed">
+  <input type="hidden" name="form_type" value="search_game">
+  <label for="game">Search for a game by name:</label>
+  <input type="text" name="game" placeholder="Enter game name..." class="rpgui-input" value="{{ user_input or '' }}" />
+  <label for="free_time">Free time amount:</label>
+  <input type="number" min="0" name="free_time" id="free_time" placeholder="e.g. 2" class="rpgui-input" value="{{ free_time or '' }}" required />
+  <label for="free_time_unit">Time Unit:</label>
+  <select name="free_time_unit" id="free_time_unit" class="rpgui-dropdown" required>
+    <option value="day" {% if free_time_unit == "day" %}selected{% endif %}>Hours per day</option>
+    <option value="week" {% if free_time_unit == "week" %}selected{% endif %}>Hours per week</option>
+  </select>
+  <button type="submit" class="rpgui-button">Search Game</button>
+</form>
