@@ -53,6 +53,7 @@
     ul {
       padding-left: 1.5em;
     }
+    
 
     a {
       color: #00ff99;
@@ -120,6 +121,13 @@
       color: #00ff99;
       font-size: 2em;
     }
+
+    .center-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 300px;
+}
   </style>
 </head>
 <body>
@@ -229,8 +237,8 @@
     {% if error %}
       <div class="rpgui-container framed rpgui-content">
         <p style="color: #ff0055;">{{ error }}</p>
-      </div>
-    {% endif %}
+      <img src="{{ url_for('static', filename='images/princess.png') }}" alt="Toad photo" class="center-img"/>       
+      {% endif %}
 
     {% if completion_data %}
       <div class="rpgui-container framed rpgui-content">

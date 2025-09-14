@@ -14,6 +14,7 @@ steam = Steam(KEY)
 
 def get_game_times(game_name):
     results = HowLongToBeat().search(game_name)
+    print("Results of search: ", results)
     if not results:
         return None, []
     game = max(results, key=lambda x: x.similarity)
@@ -111,6 +112,8 @@ def index():
                 if completion_data:
                     est_days_main = completion_data['main_story'] / hours_per_day
                     est_days_100 = completion_data['completionist'] / hours_per_day
+                else:
+                    error = f"'{game}' was not found. Please check your spelling and try again!"
 
         elif form_type == 'steam_lookup':
             # Steam ID lookup
